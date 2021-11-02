@@ -1,0 +1,82 @@
+GET http://localhost:7071/api/createAzureBatchJob
+    ?name=Stephen
+
+GET http://localhost:7071/api/GetRatings
+
+
+
+    
+
+POST http://localhost:7071/api/createAzureBatchJob HTTP/1.1
+content-type: application/json
+
+{
+    "tasksToRun": 100,
+    "loopsMultiplier": 100,
+    "displayName": "PieCalculatorJobfromAzureFunctionApp",
+    "priority": 700,
+    "maxTaskBatch": 100
+} 
+    
+POST http://localhost:7071/api/getJobStatus HTTP/1.1
+content-type: application/json
+
+{
+    "verbose":true,
+    "jobID": "ef783b3f-b20b-4cf3-a12e-748b23b00347"
+} 
+
+POST http://localhost:7071/api/getJobStatus HTTP/1.1
+content-type: application/json
+
+{
+    "verbose":false,
+    "jobID": "78120e81-c28e-41f5-9f2d-28eb6d396521"
+} 
+
+
+POST http://localhost:7071/api/deleteJob HTTP/1.1
+content-type: application/json
+
+{
+    "name":"Stephen",
+    "jobID": "be85f9fd-0b68-42dc-97a5-0eb79bb79916"
+    } 
+
+POST http://localhost:7071/api/deleteMatchingJobs HTTP/1.1
+content-type: application/json
+
+{
+    "displayNameMatch":"PieCalculatorJobfromAzureFunctionApp",
+    "jobState": "completed"
+    } 
+
+
+
+
+
+
+
+
+
+
+POST https://apimanagementchallenge4.azure-api.net/rating/CreateRating
+content-type: application/json
+Ocp-Apim-Subscription-Key: 90c34d29150040aab95b42646eb9941b
+
+{
+  "userId": "cc20a6fb-a91f-4192-874d-132493685376",
+  "productId": "4c25613a-a3c2-4ef3-8e02-9c335eb23204",
+  "locationName": "TestFromVSCODE",
+  "rating": 5,
+  "userNotes": "TestFromVSCODE"
+}
+
+External Partners
+
+GET https://apimanagementchallenge4.azure-api.net/users/GetUsers
+Ocp-Apim-Subscription-Key: 90c34d29150040aab95b42646eb9941b
+
+GET https://apimanagementchallenge4.azure-api.net/product/GetProducts
+Ocp-Apim-Subscription-Key: 90c34d29150040aab95b42646eb9941b
+
