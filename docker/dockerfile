@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
-RUN apt-get update && apt-get install -y python3.9 
-COPY ../requirements.txt .
+RUN apt-get update && apt-get install -y python3.9 && apt-get install -y python3-pip 
+COPY ./docker/requirements.txt .
 RUN pip install -r requirements.txt
-COPY ../piecalc/pie.py .
+COPY ./piecalc/pie.py .
 CMD ["python]
