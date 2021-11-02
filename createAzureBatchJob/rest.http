@@ -11,11 +11,15 @@ POST http://localhost:7071/api/createAzureBatchJob HTTP/1.1
 content-type: application/json
 
 {
-    "tasksToRun": 100,
-    "loopsMultiplier": 100,
+    "tasksToRun": 10000,
+    "loopsMultiplier": 100000,
     "displayName": "PieCalculatorJobfromAzureFunctionApp",
     "priority": 700,
-    "maxTaskBatch": 100
+    "maxTaskBatch": 100,
+    "linux": true,
+    "poolID": "linuxPiev5", 
+    "container": true,
+    "containerImage": "hpcgbbemea01.azurecr.io/piecalc/pie:1.0"
 } 
     
 POST http://localhost:7071/api/getJobStatus HTTP/1.1

@@ -50,7 +50,7 @@ def print_batch_exception(batch_exception):
 
 
 
-def add_tasks(batch_service_client, job_id, startval, multiplier, numloops,maxTaskBatch):
+def add_tasks(batch_service_client, job_id, startval, multiplier, numloops,maxTaskBatch,linux,containerImage):
     """
     Adds a task for each input file in the collection to the specified job.
 
@@ -75,18 +75,29 @@ def add_tasks(batch_service_client, job_id, startval, multiplier, numloops,maxTa
 
         #command = "cmd /c \"C:\\Program Files (x86)\\Microsoft Office\\root\\Office16\\EXCEL.EXE\" %AZ_BATCH_APP_PACKAGE_excelSqlWrite#3.0%\\testvba2.xlsm"
         command = "cmd /c \"C:\\Program Files\\Python39\\python.exe\" %AZ_BATCH_APP_PACKAGE_piecalc#1.0%\\pie.py " + str(startval*(multiplier*count))
+        commandLinux = "/bin/bash -c \"python3 /pie.py "+ str(startval*(multiplier*count)) + "\" "
         logging.debug("The value of counter is: "+ str(count)+ " command is: "+ str(command))
         
         user = batchmodels.UserIdentity(auto_user=batchmodels.AutoUserSpecification(elevation_level=batchmodels.ElevationLevel.admin, scope=batchmodels.AutoUserScope.pool))
         applicationpackage = batchmodels.ApplicationPackageReference(application_id='piecalc',version='1.0')
-        tasks.append(batch.models.TaskAddParameter(
-            id='Task{}'.format(count),
-            command_line=command,
-            user_identity=user,
-            application_package_references=[applicationpackage]
-
-
+        if containerImage:
+            task_container_settings = batchmodels.TaskContainerSettings(image_name=containerImage )
+        # TBD handle the use case of windows containers / linux no containers 
+        if linux:
+            tasks.append(batch.models.TaskAddParameter(
+                id='Task{}'.format(count),
+                command_line=commandLinux,
+                user_identity=user,
+                container_settings=task_container_settings
+            )
         )
+        else:
+            tasks.append(batch.models.TaskAddParameter(
+                id='Task{}'.format(count),
+                command_line=command,
+                user_identity=user,
+                application_package_references=[applicationpackage]
+            )
         )
         if math.remainder(count, maxTaskBatch)== 0:
             logging.info("Submitting a batch of tasks for job ID " +str(job_id)+ ". Tasks will be submitted every " + str(maxTaskBatch) + ".  Currently submitting tasks up to " +str(count))
@@ -203,7 +214,7 @@ def connect_to_azure():
                                                  batch_url='https://azbatchhpcgbb.eastus.batch.azure.com')
     return batch_client
 
-def submit_batch_job(jobID, taskstorun, loopsMultiplier,displayName,priority,maxTaskBatch):
+def submit_batch_job(jobID, taskstorun, loopsMultiplier,displayName,priority,maxTaskBatch,linux,poolID,containerImage):
 
     start_time = datetime.datetime.now().replace(microsecond=0)
     logging.info('Sample start: {}'.format(start_time))
@@ -214,14 +225,14 @@ def submit_batch_job(jobID, taskstorun, loopsMultiplier,displayName,priority,max
     dateTimeObj = datetime.datetime.now()
     dateObj = dateTimeObj.date()    
     job_id = jobID
-    pool_id = "piePoolTuePM"
+    pool_id = poolID
     
     # Create the job that will run the tasks.
     create_job(batch_client, job_id, pool_id,displayName,priority)
 
     try:
         # Add the tasks to the job.
-        add_tasks(batch_client, job_id, 1,loopsMultiplier,taskstorun,maxTaskBatch)
+        add_tasks(batch_client, job_id, 1,loopsMultiplier,taskstorun,maxTaskBatch,linux,containerImage)
     except batchmodels.BatchErrorException as err:
         print_batch_exception(err)
         raise

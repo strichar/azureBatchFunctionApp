@@ -33,7 +33,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         
         displayName=(req_body.get('displayName')+"_"+str(datetime.now()))
         priority = (req_body.get('priority'))
-        submit_batch_job(guid,tasksToRun,loopsMultiplier,displayName,priority,maxTaskBatch)
+        linux = (req_body.get('linux'))
+        poolID = (req_body.get('poolID'))
+        container= (req_body.get('container'))
+        if container:
+            containerImage = (req_body.get('containerImage'))
+        else:
+            containerImage=None
+        
+        submit_batch_job(guid,tasksToRun,loopsMultiplier,displayName,priority,maxTaskBatch,linux,poolID,containerImage)
         return func.HttpResponse(f" {guid}")
 
     else:
