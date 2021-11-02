@@ -60,23 +60,4 @@ content-type: application/json
 
 
 
-POST https://apimanagementchallenge4.azure-api.net/rating/CreateRating
-content-type: application/json
-Ocp-Apim-Subscription-Key: 90c34d29150040aab95b42646eb9941b
-
-{
-  "userId": "cc20a6fb-a91f-4192-874d-132493685376",
-  "productId": "4c25613a-a3c2-4ef3-8e02-9c335eb23204",
-  "locationName": "TestFromVSCODE",
-  "rating": 5,
-  "userNotes": "TestFromVSCODE"
-}
-
-External Partners
-
-GET https://apimanagementchallenge4.azure-api.net/users/GetUsers
-Ocp-Apim-Subscription-Key: 90c34d29150040aab95b42646eb9941b
-
-GET https://apimanagementchallenge4.azure-api.net/product/GetProducts
-Ocp-Apim-Subscription-Key: 90c34d29150040aab95b42646eb9941b
 
